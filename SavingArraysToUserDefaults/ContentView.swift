@@ -15,6 +15,9 @@ struct ContentView: View {
     // The list of favorite colours
     @State private var favouriteColours: [String] = []
     
+    // The UserDefaults key for reading/writing the array
+    private let favouriteColoursKey = "favouriteColours"
+    
     var body: some View {
         
         NavigationView {
@@ -45,6 +48,32 @@ struct ContentView: View {
             .navigationTitle("Favourites")
             
         }
+        // See: https://www.hackingwithswift.com/books/ios-swiftui/how-to-be-notified-when-your-swiftui-app-moves-to-the-background
+        .onReceive(NotificationCenter.default.publisher(for: UIApplication.willResignActiveNotification)) { _ in
+            
+            // DEBUG
+            print("Moving to the background!")
+            
+            // Gain access to user defaults
+            let defaults = UserDefaults.standard
+            
+            // Save the array of favourite colours to user defaults using the specified key
+            defaults.set(favouriteColours, forKey: favouriteColoursKey)
+            
+        }
+        .onAppear() {
+            
+            // When app is opened, retrieve data from UserDefaults storage
+            print("Moving back to the foreground!")
+            
+            // Gain access to user defaults
+            let defaults = UserDefaults.standard
+            
+            // Get the array – we need to remind the compiler of the type, so we cast from Any? to [String]
+            // If the cast fails, it will set the array to an empty array through the use of the ?? nil coalescing operator
+            favouriteColours = defaults.object(forKey: favouriteColoursKey) as? [String] ?? []
+                        
+        }
         
     }
     
@@ -58,7 +87,7 @@ struct ContentView: View {
         
         // Clear the input field
         givenColour = ""
-
+        
     }
 }
 
