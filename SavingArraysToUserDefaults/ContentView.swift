@@ -26,19 +26,18 @@ struct ContentView: View {
                     TextField("e.g.: blue", text: $givenColour)
                     
                     Button(action: {
-                        
-                        // Add to list
-                        favouriteColours.append(givenColour)
-                        
-                        // DEBUG
-                        print(favouriteColours)
-                        
-                        // Clear the input field
-                        givenColour = ""
-                        
+                        saveColour()
                     }, label: {
                         Text("Save")
                     })
+                    
+                }
+                
+                Section(header: Text("My favourite colours are...")) {
+                    // NOTE: If items in a list will be removed later, they really should be made unique. See: https://www.hackingwithswift.com/books/ios-swiftui/working-with-identifiable-items-in-swiftui
+                    List(favouriteColours, id: \.self) { colour in
+                        Text(colour)
+                    }
                     
                 }
                 
@@ -47,7 +46,19 @@ struct ContentView: View {
             
         }
         
+    }
+    
+    func saveColour() {
         
+        // Add to list
+        favouriteColours.append(givenColour)
+        
+        // DEBUG
+        print(favouriteColours)
+        
+        // Clear the input field
+        givenColour = ""
+
     }
 }
 
